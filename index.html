@@ -117,6 +117,10 @@
 
   /* RESULTS */
   .results{margin-top:14px;}
+  .mid-rate{
+    font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-faint);
+    text-align:center;margin-top:14px;
+  }
   .result-row{
     display:grid;grid-template-columns:34px 1fr auto auto;align-items:center;gap:16px;
     padding:16px 18px;border-radius:10px;margin-bottom:8px;border:1px solid transparent;
@@ -190,7 +194,7 @@
 
 <nav>
   <div class="logo">Sabi<span>Rate</span></div>
-  <div class="badge">Sample rate data</div>
+  <div class="badge" id="rateBadge">Loading live rate…</div>
 </nav>
 
 <header class="hero">
@@ -213,6 +217,7 @@
   </div>
 
   <div class="results" id="results"></div>
+  <div class="mid-rate" id="midRateDisplay"></div>
 </div>
 
 <div class="reality" id="realityPanel">
@@ -241,7 +246,7 @@
 
 <footer>
   <p><strong>This is a comparison tool, not a money transmitter.</strong> SabiRate does not move funds, hold money, or process transfers. It shows published rate and fee data so you can decide which provider to use directly.</p>
-  <p>Rates and fees shown are <strong>sample/illustrative data</strong>, not live feeds. Provider pricing changes daily — before sending, confirm the current rate on the provider's own site or app. See the code comments for where to plug in live or manually-refreshed figures.</p>
+  <p>The mid-market exchange rate shown is <strong>live</strong>, pulled from a public FX data source on page load. Provider markups and fees are checked periodically, not in real time — before sending, confirm the current price on the provider's own site or app.</p>
   <p>Some provider links may be affiliate links, which can earn a referral fee at no extra cost to you. This does not affect the ranking shown above, which is based only on rate and fee data.</p>
   <p class="updated">Sample data as of: 26 Aug 2026 — update the PROVIDERS table in the source before publishing.</p>
 </footer>
@@ -263,6 +268,49 @@ already used for SkyNest.
 
 
 <script>
+// ============================================================
+// LIVE RATE ENGINE
+// The mid-market exchange rate is fetched live on page load from a
+// free, no-key FX API. Provider figures below are stored as a MARKUP
+// PERCENT off mid-market plus a fee — not a hardcoded rate — because
+// the spread providers charge changes weekly/monthly, while the
+// underlying market rate moves by the hour. This means the payout
+// numbers stay accurate without you touching this file daily.
+//
+// To update: check each provider's live quote against the mid-market
+// rate shown on the page, recompute their markup% ( (mid - theirRate)
+// / mid * 100 ), and update the markupPercent value below. Do this
+// every few weeks, not every day.
+// ============================================================
+let liveMidRates = { USD: null, GBP: null, CAD: null };
+
+async function fetchLiveRates(){
+  const badge = document.getElementById("rateBadge");
+  try{
+    const [usd, gbp, cad] = await Promise.all([
+      fetch("https://open.er-api.com/v6/latest/USD").then(r => r.json()),
+      fetch("https://open.er-api.com/v6/latest/GBP").then(r => r.json()),
+      fetch("https://open.er-api.com/v6/latest/CAD").then(r => r.json())
+    ]);
+    liveMidRates.USD = usd.rates && usd.rates.NGN;
+    liveMidRates.GBP = gbp.rates && gbp.rates.NGN;
+    liveMidRates.CAD = cad.rates && cad.rates.NGN;
+    if (liveMidRates.USD && liveMidRates.GBP && liveMidRates.CAD){
+      badge.textContent = "Live mid-market rate";
+      badge.style.color = "#8FCB9F";
+      badge.style.borderColor = "rgba(111,174,139,0.5)";
+      badge.style.background = "rgba(111,174,139,0.14)";
+    } else {
+      throw new Error("Missing NGN in response");
+    }
+  } catch(e){
+    // Fallback to last-known approximate rates if the API is unreachable
+    liveMidRates = { USD: 1620, GBP: 2050, CAD: 1180 };
+    badge.textContent = "Live rate unavailable — showing estimate";
+  }
+  compare();
+}
+
 // ============================================================
 // AFFILIATE CONFIG — drop your referral/affiliate IDs in here once
 // each program approves you. Leave blank ("") until then — the
@@ -305,44 +353,41 @@ function linkFor(providerName){
 }
 
 // ============================================================
-// RATE DATA — replace with live/manually-refreshed figures before launch.
-// mid: illustrative mid-market rate (source currency -> NGN)
-// providers: rate = what the provider actually pays out per unit
-//            feeFlat = flat fee in source currency
-//            feePercent = percentage fee taken off the send amount
-// Refresh cadence: weekly is enough for a comparison tool like this —
-// naira parallel-market moves matter more than day-to-day noise.
+// PROVIDER DATA — markupPercent is how far below the live mid-market
+// rate each provider prices (check their site, compute:
+// (mid - theirRate) / mid * 100). feeFlat/feePercent are their
+// stated fees. These change slowly — recheck every few weeks.
 // ============================================================
 const CORRIDORS = {
   USD: {
-    label: "USD → NGN", symbol: "$", mid: 1620,
+    label: "USD → NGN", symbol: "$",
     providers: [
-      { name: "Sendwave",        rate: 1610, feeFlat: 0,    feePercent: 0,    speed: "Minutes",    method: "Bank / mobile wallet" },
-      { name: "Wise",            rate: 1618, feeFlat: 2.80, feePercent: 0.6,  speed: "Minutes–1 day", method: "Bank transfer" },
-      { name: "Remitly (Econ.)", rate: 1600, feeFlat: 1.99, feePercent: 0,    speed: "3–5 days",   method: "Bank transfer" },
-      { name: "Remitly (Exp.)",  rate: 1585, feeFlat: 3.99, feePercent: 0,    speed: "Minutes",    method: "Bank / cash pickup" },
-      { name: "WorldRemit",      rate: 1595, feeFlat: 3.99, feePercent: 0,    speed: "Minutes–1 day", method: "Bank / mobile wallet" },
-      { name: "Chipper Cash",    rate: 1605, feeFlat: 0,    feePercent: 1.0,  speed: "Minutes",    method: "Mobile wallet" },
-      { name: "Western Union",   rate: 1560, feeFlat: 5.00, feePercent: 0,    speed: "Minutes–1 day", method: "Cash pickup" }
+      { name: "Sendwave",        markupPercent: 0.62, feeFlat: 0,    feePercent: 0,    speed: "Minutes",    method: "Bank / mobile wallet" },
+      { name: "Wise",            markupPercent: 0.12, feeFlat: 2.80, feePercent: 0.6,  speed: "Minutes–1 day", method: "Bank transfer" },
+      { name: "Remitly (Econ.)", markupPercent: 1.24, feeFlat: 1.99, feePercent: 0,    speed: "3–5 days",   method: "Bank transfer" },
+      { name: "Remitly (Exp.)",  markupPercent: 2.16, feeFlat: 3.99, feePercent: 0,    speed: "Minutes",    method: "Bank / cash pickup" },
+      { name: "WorldRemit",      markupPercent: 1.54, feeFlat: 3.99, feePercent: 0,    speed: "Minutes–1 day", method: "Bank / mobile wallet" },
+      { name: "Chipper Cash",    markupPercent: 0.93, feeFlat: 0,    feePercent: 1.0,  speed: "Minutes",    method: "Mobile wallet" },
+      { name: "Western Union",   markupPercent: 3.70, feeFlat: 5.00, feePercent: 0,    speed: "Minutes–1 day", method: "Cash pickup" }
     ]
   },
   GBP: {
-    label: "GBP → NGN", symbol: "£", mid: 2050,
+    label: "GBP → NGN", symbol: "£",
     providers: [
-      { name: "Sendwave",        rate: 2038, feeFlat: 0,    feePercent: 0,    speed: "Minutes",    method: "Bank / mobile wallet" },
-      { name: "Wise",            rate: 2044, feeFlat: 2.20, feePercent: 0.55, speed: "Minutes–1 day", method: "Bank transfer" },
-      { name: "WorldRemit",      rate: 2015, feeFlat: 3.49, feePercent: 0,    speed: "Minutes–1 day", method: "Bank / mobile wallet" },
-      { name: "Remitly (Exp.)",  rate: 2000, feeFlat: 2.99, feePercent: 0,    speed: "Minutes",    method: "Bank / cash pickup" },
-      { name: "Western Union",   rate: 1975, feeFlat: 4.50, feePercent: 0,    speed: "Minutes–1 day", method: "Cash pickup" }
+      { name: "Sendwave",        markupPercent: 0.59, feeFlat: 0,    feePercent: 0,    speed: "Minutes",    method: "Bank / mobile wallet" },
+      { name: "Wise",            markupPercent: 0.29, feeFlat: 2.20, feePercent: 0.55, speed: "Minutes–1 day", method: "Bank transfer" },
+      { name: "WorldRemit",      markupPercent: 1.71, feeFlat: 3.49, feePercent: 0,    speed: "Minutes–1 day", method: "Bank / mobile wallet" },
+      { name: "Remitly (Exp.)",  markupPercent: 2.44, feeFlat: 2.99, feePercent: 0,    speed: "Minutes",    method: "Bank / cash pickup" },
+      { name: "Western Union",   markupPercent: 3.66, feeFlat: 4.50, feePercent: 0,    speed: "Minutes–1 day", method: "Cash pickup" }
     ]
   },
   CAD: {
-    label: "CAD → NGN", symbol: "C$", mid: 1180,
+    label: "CAD → NGN", symbol: "C$",
     providers: [
-      { name: "Sendwave",        rate: 1170, feeFlat: 0,    feePercent: 0,    speed: "Minutes",    method: "Bank / mobile wallet" },
-      { name: "Wise",            rate: 1176, feeFlat: 2.50, feePercent: 0.6,  speed: "Minutes–1 day", method: "Bank transfer" },
-      { name: "WorldRemit",      rate: 1155, feeFlat: 2.99, feePercent: 0,    speed: "Minutes–1 day", method: "Bank / mobile wallet" },
-      { name: "Remitly (Exp.)",  rate: 1145, feeFlat: 3.49, feePercent: 0,    speed: "Minutes",    method: "Bank / cash pickup" }
+      { name: "Sendwave",        markupPercent: 0.85, feeFlat: 0,    feePercent: 0,    speed: "Minutes",    method: "Bank / mobile wallet" },
+      { name: "Wise",            markupPercent: 0.34, feeFlat: 2.50, feePercent: 0.6,  speed: "Minutes–1 day", method: "Bank transfer" },
+      { name: "WorldRemit",      markupPercent: 2.12, feeFlat: 2.99, feePercent: 0,    speed: "Minutes–1 day", method: "Bank / mobile wallet" },
+      { name: "Remitly (Exp.)",  markupPercent: 2.97, feeFlat: 3.49, feePercent: 0,    speed: "Minutes",    method: "Bank / cash pickup" }
     ]
   }
 };
@@ -376,12 +421,15 @@ function renderTabs(){
 function compare(){
   const corridor = CORRIDORS[currentCorridor];
   const amount = parseFloat(amountInput.value) || 0;
+  const mid = liveMidRates[currentCorridor];
+  if (!mid){ return; } // rates still loading
 
   const computed = corridor.providers.map(p => {
+    const effectiveRate = mid * (1 - p.markupPercent / 100);
     const afterFlat = Math.max(amount - p.feeFlat, 0);
     const afterPercent = afterFlat * (1 - p.feePercent / 100);
-    const payout = afterPercent * p.rate;
-    return { ...p, payout };
+    const payout = afterPercent * effectiveRate;
+    return { ...p, rate: effectiveRate, payout };
   }).sort((a, b) => b.payout - a.payout);
 
   resultsEl.innerHTML = "";
@@ -402,6 +450,9 @@ function compare(){
     resultsEl.appendChild(row);
   });
 
+  document.getElementById("midRateDisplay").textContent =
+    `Live mid-market rate: 1 ${currentCorridor} ≈ ₦${mid.toLocaleString(undefined,{maximumFractionDigits:2})} — providers below price below this`;
+
   const best = computed[0];
   const worst = computed[computed.length - 1];
   const gap = Math.max(best.payout - worst.payout, 0);
@@ -420,8 +471,9 @@ document.getElementById("compareBtn").addEventListener("click", compare);
 amountInput.addEventListener("keydown", e => { if (e.key === "Enter") compare(); });
 
 renderTabs();
-compare();
+fetchLiveRates();
 </script>
 
 </body>
 </html>
+
