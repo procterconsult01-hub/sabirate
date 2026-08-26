@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SabiRate — Know your best rate before you send</title>
+<meta name="description" content="Compare Sendwave, Wise, Remitly, WorldRemit, Chipper Cash and Western Union side by side for sending money to Nigeria. See the real naira payout, not just the advertised rate.">
+<meta name="keywords" content="send money to Nigeria, best remittance rate Nigeria, naira exchange rate, Wise vs Remitly, WorldRemit Nigeria, cheapest way to send money to Nigeria">
+<link rel="canonical" href="https://sabirate.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SabiRate — Know your best rate before you send">
+<meta property="og:description" content="Compare remittance providers side by side and see the real naira payout before you send money to Nigeria.">
+<meta property="og:url" content="https://sabirate.com/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SabiRate — Know your best rate before you send">
+<meta name="twitter:description" content="Compare remittance providers side by side and see the real naira payout before you send money to Nigeria.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#131F3A;
+    --bg-deep:#0E1730;
+    --panel:#1B2B52;
+    --panel-hi:#213562;
+    --ink:#F3EEE2;
+    --ink-dim:#AEB6D1;
+    --ink-faint:#7C86A8;
+    --gold:#D9A441;
+    --gold-deep:#B9832B;
+    --rust:#D9552C;
+    --good:#6FAE8B;
+    --line:rgba(243,238,226,0.12);
+    --line-strong:rgba(243,238,226,0.22);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 15% -10%, rgba(217,164,65,0.14), transparent 45%),
+      radial-gradient(ellipse at 100% 0%, rgba(111,174,139,0.10), transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px;}
+
+  /* NAV */
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 24px;max-width:920px;margin:0 auto;
+  }
+  .logo{font-family:'Fraunces',serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;}
+  .logo span{color:var(--gold);}
+  .badge{
+    font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.06em;text-transform:uppercase;
+    background:rgba(217,85,44,0.14);color:#E9946F;border:1px solid rgba(217,85,44,0.35);
+    padding:5px 10px;border-radius:100px;
+  }
+
+  /* HERO */
+  header.hero{padding:36px 24px 8px;max-width:920px;margin:0 auto;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px;
+  }
+  .eyebrow::before{content:"";width:18px;height:1px;background:var(--gold-deep);display:inline-block;}
+  h1.headline{font-size:2.5rem;line-height:1.08;max-width:16ch;}
+  .sub{color:var(--ink-dim);font-size:1.05rem;max-width:46ch;margin-top:16px;}
+
+  /* CALCULATOR */
+  .calc-card{
+    margin:32px auto 0;max-width:920px;
+    background:var(--panel);border:1px solid var(--line-strong);border-radius:var(--radius);
+    padding:26px;
+  }
+  .corridor-tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+  .tab{
+    font-family:'IBM Plex Mono',monospace;font-size:0.78rem;
+    background:transparent;border:1px solid var(--line-strong);color:var(--ink-dim);
+    padding:8px 14px;border-radius:100px;cursor:pointer;transition:all .15s ease;
+  }
+  .tab.active{background:var(--gold);color:#1B1200;border-color:var(--gold);font-weight:600;}
+  .tab:hover:not(.active){border-color:var(--gold-deep);color:var(--ink);}
+
+  .amount-row{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;}
+  .field label{
+    display:block;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.06em;
+    text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px;
+  }
+  .amount-input{
+    display:flex;align-items:center;background:var(--bg-deep);border:1px solid var(--line-strong);
+    border-radius:10px;padding:0 14px;height:52px;
+  }
+  .amount-input span{font-family:'IBM Plex Mono',monospace;color:var(--ink-faint);margin-right:8px;}
+  .amount-input input{
+    background:none;border:none;outline:none;color:var(--ink);font-family:'IBM Plex Mono',monospace;
+    font-size:1.15rem;width:150px;
+  }
+  button.go{
+    height:52px;padding:0 26px;background:var(--gold);color:#1B1200;border:none;border-radius:10px;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:transform .12s ease, background .15s ease;
+  }
+  button.go:hover{background:#E8B85C;transform:translateY(-1px);}
+
+  /* RESULTS */
+  .results{margin-top:14px;}
+  .result-row{
+    display:grid;grid-template-columns:34px 1fr auto auto;align-items:center;gap:16px;
+    padding:16px 18px;border-radius:10px;margin-bottom:8px;border:1px solid transparent;
+    background:var(--bg-deep);
+  }
+  .go-link{
+    font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.03em;text-transform:uppercase;
+    color:var(--ink);background:var(--panel-hi);border:1px solid var(--line-strong);
+    padding:9px 14px;border-radius:8px;text-decoration:none;white-space:nowrap;transition:all .15s ease;
+  }
+  .go-link:hover{border-color:var(--gold);color:var(--gold);}
+  .result-row.best .go-link{background:var(--good);color:#0E2018;border-color:var(--good);font-weight:600;}
+  .result-row.best .go-link:hover{background:#7FC29A;}
+  .result-row.best{
+    background:linear-gradient(90deg, rgba(111,174,139,0.16), rgba(111,174,139,0.04));
+    border-color:rgba(111,174,139,0.4);
+  }
+  .rank{font-family:'IBM Plex Mono',monospace;color:var(--ink-faint);font-size:0.95rem;}
+  .result-row.best .rank{color:var(--good);font-weight:700;}
+  .prov-name{font-weight:600;font-size:1rem;}
+  .prov-meta{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--ink-faint);margin-top:3px;}
+  .best-tag{
+    font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.05em;text-transform:uppercase;
+    color:var(--good);border:1px solid rgba(111,174,139,0.5);padding:2px 7px;border-radius:100px;margin-left:8px;
+  }
+  .payout{text-align:right;}
+  .payout .amt{font-family:'IBM Plex Mono',monospace;font-size:1.15rem;font-weight:600;}
+  .payout .lbl{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:0.05em;}
+
+  /* REALITY CHECK */
+  .reality{
+    margin:28px auto 0;max-width:920px;
+    background:var(--panel-hi);border:1px solid var(--line-strong);border-radius:var(--radius);
+    padding:26px;
+  }
+  .reality h2{font-size:1.3rem;margin-bottom:4px;}
+  .reality .sub{margin-top:6px;margin-bottom:20px;font-size:0.92rem;}
+  .goods-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;}
+  .good{
+    background:var(--bg-deep);border:1px solid var(--line);border-radius:10px;padding:16px;
+  }
+  .good .num{font-family:'Fraunces',serif;font-size:1.7rem;color:var(--gold);font-weight:600;}
+  .good .lbl{font-size:0.82rem;color:var(--ink-dim);margin-top:4px;}
+
+  /* EXPLAINER */
+  .explainer{max-width:920px;margin:40px auto 0;padding:0 24px;}
+  .explainer h2{font-size:1.15rem;margin-bottom:18px;}
+  .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;}
+  .note{border-top:1px solid var(--line-strong);padding-top:12px;}
+  .note .n{font-family:'IBM Plex Mono',monospace;color:var(--gold-deep);font-size:0.75rem;}
+  .note p{color:var(--ink-dim);font-size:0.9rem;margin:6px 0 0;}
+
+  /* FOOTER */
+  footer{max-width:920px;margin:48px auto 0;padding:22px 24px 40px;border-top:1px solid var(--line);}
+  footer p{color:var(--ink-faint);font-size:0.78rem;line-height:1.6;margin:0 0 10px;}
+  footer .updated{
+    font-family:'IBM Plex Mono',monospace;color:var(--rust);font-size:0.72rem;
+  }
+
+  @media(max-width:560px){
+    h1.headline{font-size:1.9rem;}
+    .amount-row{flex-direction:column;align-items:stretch;}
+    button.go{width:100%;}
+    .result-row{grid-template-columns:24px 1fr;}
+    .payout{grid-column:1 / -1;text-align:left;margin-top:6px;}
+    .go-link{grid-column:1 / -1;text-align:center;margin-top:8px;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Sabi<span>Rate</span></div>
+  <div class="badge">Sample rate data</div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">Diaspora remittance comparison</div>
+  <h1 class="headline">Know who gives your family the most naira, before you send.</h1>
+  <p class="sub">Every provider quotes a different rate and a different fee. The gap between the best and worst on the same $500 transfer is often more than a bag of rice. Compare them side by side.</p>
+</header>
+
+<div class="calc-card">
+  <div class="corridor-tabs" id="corridorTabs"></div>
+  <div class="amount-row">
+    <div class="field">
+      <label id="amountLabel">You send</label>
+      <div class="amount-input">
+        <span id="currencySymbol">$</span>
+        <input type="number" id="amountInput" value="500" min="10" step="10">
+      </div>
+    </div>
+    <button class="go" id="compareBtn">Compare rates</button>
+  </div>
+
+  <div class="results" id="results"></div>
+</div>
+
+<div class="reality" id="realityPanel">
+  <h2>The Naira Reality Check</h2>
+  <p class="sub">This is what the gap between the best and worst provider on this transfer could actually buy in Nigeria right now.</p>
+  <div class="goods-grid" id="goodsGrid"></div>
+</div>
+
+<div class="explainer">
+  <h2>Why the same $500 pays out differently everywhere</h2>
+  <div class="notes">
+    <div class="note">
+      <div class="n">Rate</div>
+      <p>Every provider sets its own naira exchange rate, usually a little below the real mid-market rate. That markup is where most of them quietly make their money — not the fee.</p>
+    </div>
+    <div class="note">
+      <div class="n">Fee</div>
+      <p>Some charge a flat fee, some a percentage, some both. A $0 fee with a bad rate can cost you more than a $4 fee with a good one.</p>
+    </div>
+    <div class="note">
+      <div class="n">Speed &amp; payout method</div>
+      <p>Bank transfer, mobile wallet, or cash pickup — faster and more convenient options sometimes carry the worst rates. Worth checking before you assume "instant" is free.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p><strong>This is a comparison tool, not a money transmitter.</strong> SabiRate does not move funds, hold money, or process transfers. It shows published rate and fee data so you can decide which provider to use directly.</p>
+  <p>Rates and fees shown are <strong>sample/illustrative data</strong>, not live feeds. Provider pricing changes daily — before sending, confirm the current rate on the provider's own site or app. See the code comments for where to plug in live or manually-refreshed figures.</p>
+  <p>Some provider links may be affiliate links, which can earn a referral fee at no extra cost to you. This does not affect the ranking shown above, which is based only on rate and fee data.</p>
+  <p class="updated">Sample data as of: 26 Aug 2026 — update the PROVIDERS table in the source before publishing.</p>
+</footer>
+
+<!-- ============================================================
+DEPLOY CHECKLIST (same GitHub Pages route used for SkyNest/Waka):
+1. Create a new GitHub repo, e.g. "sabirate".
+2. Rename this file to index.html and push it to the repo root.
+3. Settings → Pages → Deploy from branch → main → / (root). Live in
+   a few minutes at yourusername.github.io/sabirate/.
+4. Buy a domain (sabirate.com or similar) and point it at GitHub
+   Pages via CNAME, same as skynest.travel.
+5. Google Search Console: verify + submit sitemap once live.
+6. Apply to Wise / WorldRemit / Remitly affiliate programs, then
+   paste approved links into the AFFILIATE.overrides block above.
+All doable from the phone via GitHub Codespaces, same workflow you
+already used for SkyNest.
+============================================================ -->
+
+
+<script>
+// ============================================================
+// AFFILIATE CONFIG — drop your referral/affiliate IDs in here once
+// each program approves you. Leave blank ("") until then — the
+// button will link straight to the provider's homepage instead,
+// so the page is never broken while you're waiting on approval.
+//
+// Where to sign up:
+//   Wise:          wise.com/partner or wise.com/affiliate-program
+//   Remitly:       remitly.com (look for "Refer a friend" / partner program)
+//   WorldRemit:    worldremit.com affiliate program (via Impact or CJ Affiliate)
+//   Sendwave:      currently no public affiliate program — link goes direct
+//   Chipper Cash:  in-app referral code only — link goes direct
+//   Western Union: WU affiliate program via Rakuten Advertising
+// ============================================================
+const AFFILIATE = {
+  base: {
+    "Sendwave":        "https://www.sendwave.com/",
+    "Wise":            "https://wise.com/",
+    "Remitly (Econ.)": "https://www.remitly.com/",
+    "Remitly (Exp.)":  "https://www.remitly.com/",
+    "WorldRemit":      "https://www.worldremit.com/",
+    "Chipper Cash":    "https://chippercash.com/",
+    "Western Union":   "https://www.westernunion.com/"
+  },
+  // Paste your approved affiliate URL here to override the base link above.
+  // Example: "Wise": "https://wise.com/invite/abc123"
+  overrides: {
+    "Sendwave": "",
+    "Wise": "",
+    "Remitly (Econ.)": "",
+    "Remitly (Exp.)": "",
+    "WorldRemit": "",
+    "Chipper Cash": "",
+    "Western Union": ""
+  }
+};
+
+function linkFor(providerName){
+  return AFFILIATE.overrides[providerName] || AFFILIATE.base[providerName] || "#";
+}
+
+// ============================================================
+// RATE DATA — replace with live/manually-refreshed figures before launch.
+// mid: illustrative mid-market rate (source currency -> NGN)
+// providers: rate = what the provider actually pays out per unit
+//            feeFlat = flat fee in source currency
+//            feePercent = percentage fee taken off the send amount
+// Refresh cadence: weekly is enough for a comparison tool like this —
+// naira parallel-market moves matter more than day-to-day noise.
+// ============================================================
+const CORRIDORS = {
+  USD: {
+    label: "USD → NGN", symbol: "$", mid: 1620,
+    providers: [
+      { name: "Sendwave",        rate: 1610, feeFlat: 0,    feePercent: 0,    speed: "Minutes",    method: "Bank / mobile wallet" },
+      { name: "Wise",            rate: 1618, feeFlat: 2.80, feePercent: 0.6,  speed: "Minutes–1 day", method: "Bank transfer" },
+      { name: "Remitly (Econ.)", rate: 1600, feeFlat: 1.99, feePercent: 0,    speed: "3–5 days",   method: "Bank transfer" },
+      { name: "Remitly (Exp.)",  rate: 1585, feeFlat: 3.99, feePercent: 0,    speed: "Minutes",    method: "Bank / cash pickup" },
+      { name: "WorldRemit",      rate: 1595, feeFlat: 3.99, feePercent: 0,    speed: "Minutes–1 day", method: "Bank / mobile wallet" },
+      { name: "Chipper Cash",    rate: 1605, feeFlat: 0,    feePercent: 1.0,  speed: "Minutes",    method: "Mobile wallet" },
+      { name: "Western Union",   rate: 1560, feeFlat: 5.00, feePercent: 0,    speed: "Minutes–1 day", method: "Cash pickup" }
+    ]
+  },
+  GBP: {
+    label: "GBP → NGN", symbol: "£", mid: 2050,
+    providers: [
+      { name: "Sendwave",        rate: 2038, feeFlat: 0,    feePercent: 0,    speed: "Minutes",    method: "Bank / mobile wallet" },
+      { name: "Wise",            rate: 2044, feeFlat: 2.20, feePercent: 0.55, speed: "Minutes–1 day", method: "Bank transfer" },
+      { name: "WorldRemit",      rate: 2015, feeFlat: 3.49, feePercent: 0,    speed: "Minutes–1 day", method: "Bank / mobile wallet" },
+      { name: "Remitly (Exp.)",  rate: 2000, feeFlat: 2.99, feePercent: 0,    speed: "Minutes",    method: "Bank / cash pickup" },
+      { name: "Western Union",   rate: 1975, feeFlat: 4.50, feePercent: 0,    speed: "Minutes–1 day", method: "Cash pickup" }
+    ]
+  },
+  CAD: {
+    label: "CAD → NGN", symbol: "C$", mid: 1180,
+    providers: [
+      { name: "Sendwave",        rate: 1170, feeFlat: 0,    feePercent: 0,    speed: "Minutes",    method: "Bank / mobile wallet" },
+      { name: "Wise",            rate: 1176, feeFlat: 2.50, feePercent: 0.6,  speed: "Minutes–1 day", method: "Bank transfer" },
+      { name: "WorldRemit",      rate: 1155, feeFlat: 2.99, feePercent: 0,    speed: "Minutes–1 day", method: "Bank / mobile wallet" },
+      { name: "Remitly (Exp.)",  rate: 1145, feeFlat: 3.49, feePercent: 0,    speed: "Minutes",    method: "Bank / cash pickup" }
+    ]
+  }
+};
+
+// Illustrative Nigerian goods pricing — approximate, for the "Reality Check" panel only.
+const GOODS = [
+  { label: "50kg bag of rice", price: 75000 },
+  { label: "Litres of petrol", price: 1200, unit: true },
+  { label: "10GB data bundles", price: 5000 },
+  { label: "Days of okada fare", price: 1000 }
+];
+
+let currentCorridor = "USD";
+const tabsEl = document.getElementById("corridorTabs");
+const amountInput = document.getElementById("amountInput");
+const currencySymbol = document.getElementById("currencySymbol");
+const resultsEl = document.getElementById("results");
+const goodsGrid = document.getElementById("goodsGrid");
+
+function renderTabs(){
+  tabsEl.innerHTML = "";
+  Object.keys(CORRIDORS).forEach(code => {
+    const btn = document.createElement("button");
+    btn.className = "tab" + (code === currentCorridor ? " active" : "");
+    btn.textContent = CORRIDORS[code].label;
+    btn.onclick = () => { currentCorridor = code; renderTabs(); currencySymbol.textContent = CORRIDORS[code].symbol; compare(); };
+    tabsEl.appendChild(btn);
+  });
+}
+
+function compare(){
+  const corridor = CORRIDORS[currentCorridor];
+  const amount = parseFloat(amountInput.value) || 0;
+
+  const computed = corridor.providers.map(p => {
+    const afterFlat = Math.max(amount - p.feeFlat, 0);
+    const afterPercent = afterFlat * (1 - p.feePercent / 100);
+    const payout = afterPercent * p.rate;
+    return { ...p, payout };
+  }).sort((a, b) => b.payout - a.payout);
+
+  resultsEl.innerHTML = "";
+  computed.forEach((p, i) => {
+    const row = document.createElement("div");
+    row.className = "result-row" + (i === 0 ? " best" : "");
+    row.innerHTML = `
+      <div class="rank">${i + 1}</div>
+      <div>
+        <div class="prov-name">${p.name}${i === 0 ? '<span class="best-tag">Best today</span>' : ''}</div>
+        <div class="prov-meta">Rate ${p.rate.toLocaleString()} · Fee ${corridor.symbol}${p.feeFlat.toFixed(2)}${p.feePercent ? " + " + p.feePercent + "%" : ""} · ${p.speed} · ${p.method}</div>
+      </div>
+      <div class="payout">
+        <div class="amt">₦${Math.round(p.payout).toLocaleString()}</div>
+        <div class="lbl">Payout</div>
+      </div>
+      <a class="go-link" href="${linkFor(p.name)}" target="_blank" rel="noopener sponsored">${i === 0 ? "Send now →" : "View →"}</a>`;
+    resultsEl.appendChild(row);
+  });
+
+  const best = computed[0];
+  const worst = computed[computed.length - 1];
+  const gap = Math.max(best.payout - worst.payout, 0);
+
+  goodsGrid.innerHTML = "";
+  GOODS.forEach(g => {
+    const qty = gap / g.price;
+    const div = document.createElement("div");
+    div.className = "good";
+    div.innerHTML = `<div class="num">${qty >= 10 ? Math.round(qty) : qty.toFixed(1)}</div><div class="lbl">${g.label}</div>`;
+    goodsGrid.appendChild(div);
+  });
+}
+
+document.getElementById("compareBtn").addEventListener("click", compare);
+amountInput.addEventListener("keydown", e => { if (e.key === "Enter") compare(); });
+
+renderTabs();
+compare();
+</script>
+
+</body>
+</html>
